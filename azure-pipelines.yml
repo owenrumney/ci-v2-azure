@@ -1,7 +1,17 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
 jobs:
-  - job: infracost
+  - job: infracost_diff_check
     condition: eq(variables['Build.Reason'], 'PullRequest')
-    container: ghcr.io/infracost/ci:0.1.4
+    container: ghcr.io/infracost/ci:0.1.5
     steps:
       - checkout: self
         fetchDepth: 0
@@ -13,4 +23,13 @@ jobs:
       - script: scanner diff --base-path base --head-path head
         env:
           INFRACOST_CLI_AUTHENTICATION_TOKEN: $(INFRACOST_API_KEY)
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          GITHUB_TOKEN: $(GITHUB_TOKEN)
+
+  - job: infracost_scan
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    container: ghcr.io/infracost/ci:0.1.5
+    steps:
+      - checkout: self
+      - script: scanner scan --path .
+        env:
+          INFRACOST_CLI_AUTHENTICATION_TOKEN: $(INFRACOST_API_KEY)
