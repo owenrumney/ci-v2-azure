@@ -1,0 +1,16 @@
+jobs:
+  - job: infracost
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    container: ghcr.io/infracost/ci:0.1.4
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+      - script: |
+          git fetch origin "$(System.PullRequest.TargetBranchName)"
+          git worktree add base "origin/$(System.PullRequest.TargetBranchName)"
+          git worktree add head HEAD
+      - script: scanner diff --base-path base --head-path head
+        env:
+          INFRACOST_CLI_AUTHENTICATION_TOKEN: $(INFRACOST_API_KEY)
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
