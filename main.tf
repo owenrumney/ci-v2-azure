@@ -8,5 +8,5 @@ provider "aws" {
 
 resource "aws_instance" "bastion" {
   ami           = "ami-0c55b159cbfafe1f0"
-  instance_type = "t3.4xlarge"
+  instance_type = "t3.8xlarge"
 }
