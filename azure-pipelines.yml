@@ -11,7 +11,7 @@ pr:
 jobs:
   - job: infracost_diff_check
     condition: eq(variables['Build.Reason'], 'PullRequest')
-    container: ghcr.io/infracost/ci:0.1.5
+    container: ghcr.io/infracost/ci:2
     steps:
       - checkout: self
         fetchDepth: 0
@@ -27,7 +27,7 @@ jobs:
 
   - job: infracost_scan
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
-    container: ghcr.io/infracost/ci:0.1.5
+    container: ghcr.io/infracost/ci:2
     steps:
       - checkout: self
       - script: scanner scan --path .
